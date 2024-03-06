@@ -6,26 +6,69 @@ const keys = require("./config/keys")
 const mongoose = require("mongoose");
 const { MONGO_URL } = process.env;
 // Make sure the database is connected before starting the server
-
+const User = require ('./model/User')
 
 console.log({keys});
 app.get('/', (req, res) => {
     res.send("This is a blank home page")
 })
-
-app.get('/createToken', (req,res) => {
-    let user = {
-        id: "123",
-        userName: "admin",
-        email: "admin@gamil.com",
+app.get("/users", async (req, res) => {
+    try{
+    const users = await User.find();
+    res.send(users)
+    }catch(e){
+        console.error(e)
     }
-    const token = jwt.sign({ user: user }, keys.secretOrKey);
-    console.log({token});
+//   res.send("This is a blank home page");
+});
+app.get("/createUser", async (req, res) => {
+  try {
+    const user = {
+      id: "123",
+      userName: "admin",
+      email: "admin@gamil.com",
+    };
+    const newUser = await User.create(user);
+    newUser.save();
+    console.log("User created successfully:", newUser);
+    res.status(200).send("newUser created");
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).send("Error creating user");
+  }
+});
+
+app.get('/createToken', async (req,res) => {
+     try {
+         let user = {
+           id: "123",
+           userName: "admin",
+           email: "admin@gamil.com",
+         };
+      // do some data validation
+      const newUser = new User(user);
+      newUser.save();
+      console.log("User create successfully", newUser);
+      const payload = {
+                id: user._id,
+                name: user.userName,
+                email: user.email,
+            }
+      const token = await jwt.sign(
+        payload,
+        keys.secretOrKey
+      );
+       console.log({token});
+      res.status(201).json({ message: "User was successfully registered." });
+    } catch (e) {
+      console.log(e);
+    }
     //tao duoc token roi thi gui ve luu o client
     res.send("Token was created successfully")
 })
 
 app.get('/profile', async (req,res) => {
+   
     const result = await jwt.verify(
 
     )
@@ -46,9 +89,10 @@ mongoose
   .catch((error) => {
     console.error("Error connecting to MongoDB:", error);
   });
-// app.listen(3000, () => {
-//     console.log("Listening on port 3000");
-// })
+
+  app.listen(3000, () => {
+    console.log("App listen on localhost 3000");
+  })
 
 // Bản chất của authentication là xác định tính hợp lệ của 1 yêu cầu gửi tới gồm: 
 // - tính chính danh của người gửi

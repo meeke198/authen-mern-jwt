@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const refType = Schema.Types.ObjectId;
 
 const UserSchema = new Schema({
-  username: { type: String, required: true },
+  userName: { type: String, required: true },
   email: { type: String, required: true },
 });
 
