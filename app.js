@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
+const bcrypt = require("bcrypt");
 const keys = require("./config/keys")
 const mongoose = require("mongoose");
 const { MONGO_URL } = process.env;
@@ -27,45 +28,61 @@ app.get("/createUser", async (req, res) => {
       id: "123",
       userName: "admin",
       email: "admin@gamil.com",
+      password: "password",
     };
+
     const newUser = await User.create(user);
-    newUser.save();
-    console.log("User created successfully:", newUser);
-    res.status(200).send("newUser created");
+
+    bcrypt.genSalt(10, (err, salt) => {
+      bcrypt.hash(newUser.password, salt, async (err, hash) => {
+        if (err) throw err;
+        newUser.password = hash;
+        // console.log(newUser.password);
+
+        await newUser.save();
+
+        const payload = {
+          id: newUser._id,
+          userName: newUser.userName,
+          email: newUser.email,
+          password: newUser.password,
+        };
+
+        const token = jwt.sign(
+          payload,
+          keys.secretOrKey,
+          { expiresIn: 3600 },
+          
+        );
+        (err, token) => {
+          if (err) throw err;
+          res.json({
+            success: true,
+            token: "Bearer " + token,
+          });
+        };
+        console.log("token", token);
+
+        console.log("newUser created successfully", newUser);
+        res.send("User created");
+      });
+    });
   } catch (error) {
     console.error("Error creating user:", error);
     res.status(500).send("Error creating user");
   }
 });
-
-app.get('/createToken', async (req,res) => {
-     try {
-         let user = {
-           id: "123",
-           userName: "admin",
-           email: "admin@gamil.com",
-         };
-      // do some data validation
-      const newUser = new User(user);
-      newUser.save();
-      console.log("User create successfully", newUser);
-      const payload = {
-                id: user._id,
-                name: user.userName,
-                email: user.email,
-            }
-      const token = await jwt.sign(
-        payload,
-        keys.secretOrKey
-      );
-       console.log({token});
-      res.status(201).json({ message: "User was successfully registered." });
-    } catch (e) {
-      console.log(e);
-    }
-    //tao duoc token roi thi gui ve luu o client
-    res.send("Token was created successfully")
-})
+// Assuming you are making an HTTP request to the server
+// axios.post('/login', userData)
+//   .then(response => {
+//     const token = response.data.token; // Access the token from the response
+//     // Save the token in localStorage, sessionStorage, or any other suitable storage mechanism
+//     localStorage.setItem('token', token);
+//     // Perform other actions with the token as needed
+//   })
+//   .catch(error => {
+//     // Handle error
+//   });
 
 app.get('/profile', async (req,res) => {
    
