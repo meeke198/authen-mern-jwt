@@ -1,6 +1,8 @@
 const express = require("express");
 const app = express();
 const jwt = require("jsonwebtoken");
+const bodyParser = require("body-parser");
+const cors = require("cors");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const keys = require("./config/keys")
@@ -8,8 +10,10 @@ const mongoose = require("mongoose");
 const { MONGO_URL } = process.env;
 // Make sure the database is connected before starting the server
 const User = require ('./model/User')
-
+app.use(cors());
 console.log({keys});
+// Parse JSON bodies
+app.use(bodyParser.json());
 app.get('/', (req, res) => {
     res.send("This is a blank home page")
 })
@@ -22,13 +26,14 @@ app.get("/users", async (req, res) => {
     }
 //   res.send("This is a blank home page");
 });
-app.get("/createUser", async (req, res) => {
+app.
+post("/signup", async (req, res) => {
   try {
     const user = {
       id: "123",
-      userName: "admin",
-      email: "admin@gamil.com",
-      password: "password",
+      userName: req.body.userName,
+      email: req.body.email,
+      password: req.body.password,
     };
 
     const newUser = await User.create(user);
