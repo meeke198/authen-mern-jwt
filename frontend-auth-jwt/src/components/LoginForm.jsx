@@ -3,11 +3,12 @@ import React, { useState } from "react";
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+console.log({email});
+console.log({password});
   const handleSubmit = (e) => {
     e.preventDefault();
     // Perform login logic here
-    console.log("Logging in with:", email, password);
+    // console.log("Logging in with:", email, password);
   };
 
   return (
