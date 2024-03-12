@@ -13,8 +13,8 @@ function App() {
       <Router>
         {/* <div className="App"> */}
           <Routes>
-            <Route path="/" element={<SignupForm />} />
-            <Route path="/signin" element={<LoginForm/>} />
+            <Route path="/signup" element={<SignupForm />} />
+            <Route path="/login" element={<LoginForm/>} />
           </Routes>
         {/* </div> */}
       </Router>

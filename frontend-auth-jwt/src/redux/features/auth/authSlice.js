@@ -5,7 +5,6 @@ const initialState = {
   loading: false,
   error: null
 };
-
 export const signup = createAsyncThunk(
   "auth/signup",
   async (userData, { isRejectedWithValue }) => {
@@ -18,18 +17,41 @@ export const signup = createAsyncThunk(
         },
         body: JSON.stringify(userData),
       });
-      console.log({ response });
+      
       if (!response.ok) {
         throw new Error("Signup failed");
       }
+      console.log(response.token);
       const data = await response.json();
-      console.log({ data });
+      const token = data.token;
+      localStorage.setItem("token", token.slice(7));
+      console.log({data});
       return data;
     } catch (error) {
       return isRejectedWithValue(error.message);
     }
   }
 );
+
+export const login = createAsyncThunk("auth/login", async (userData) => {
+  try {
+    const response = fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${userData.token}`,
+      },
+      body: JSON.stringify(userData),
+    });
+
+    if(!response.ok){
+      throw Error("User not found")
+    }
+  const data = await response.json();
+  //decoded and login user
+  } catch (error) {}
+});
+
 export const authSlice = createSlice({
   name: "auth",
   initialState,

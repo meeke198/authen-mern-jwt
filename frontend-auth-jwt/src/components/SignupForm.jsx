@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {useDispatch, useSelector} from "react-redux";
 import { signup } from "../redux/features/auth/authSlice";
 const SignupForm = () => {
@@ -16,8 +16,11 @@ const SignupForm = () => {
       userName
     }
     dispatch(signup(newUser));
+     setEmail("");
+     setPassword("");
+     setUserName("");
   };
-
+const isFormValid = email.trim() !== "" && password.trim() !== "";
   return (
     <form onSubmit={handleSubmit}>
       <h2>Signup</h2>
@@ -41,8 +44,10 @@ const SignupForm = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <br/>
-      <button type="submit">Signup</button>
+      <br />
+      <button type="submit" disable={!isFormValid}>
+        Signup
+      </button>
     </form>
   );
 };
