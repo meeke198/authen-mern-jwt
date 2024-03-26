@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, isRejectedWithValue } from "@reduxjs/too
 
 const initialState = {
   user: null,
+  token: null,
   loading: false,
   error: null
 };
@@ -23,9 +24,6 @@ export const signup = createAsyncThunk(
       }
       console.log(response.token);
       const data = await response.json();
-      const token = data.token;
-      localStorage.setItem("token", token.slice(7));
-      console.log({data});
       return data;
     } catch (error) {
       return isRejectedWithValue(error.message);
@@ -48,13 +46,20 @@ export const login = createAsyncThunk("auth/login", async (userData) => {
       throw Error("User not found")
     }
   const data = await response.json();
+  const token = data.token;
+  localStorage.setItem("token", token.slice(7));
+  console.log({ data });
   //decoded and login user
-  } catch (error) {}
+  return data;
+  } catch (error) {
+    console.error(error)
+  }
 });
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(signup.pending, (state) => {
