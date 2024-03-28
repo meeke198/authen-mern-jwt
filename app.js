@@ -13,37 +13,13 @@ const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 // Make sure the database is connected before starting the server
-const {User, validateRegistration,
-  validateLogin} = require("./model/User");
+const { User, validateRegistration, validateLogin } = require("./model/User");
 app.use(cors());
-console.log({ keys });
 // Parse JSON bodies
 app.use(bodyParser.json());
 // Middleware to initialize Passport
 app.use(passport.initialize());
-// app.get("/test", async (req, res) => {
-//   try {
-//     const client = await pool.connect();
-//     res.send("Connection successful!");
-//     client.release();
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).send("Server Error");
-//   }
-// });
-// app.post("/todos", async (req, res) => {
-//   try {
-//     const { description } = req.body;
-//     const newTodo = await pool.query(
-//       "INSERT INTO todo (description) VALUES($1) RETURNING *",
-//       [description]
-//     );
 
-//     res.json(newTodo.rows[0]);
-//   } catch (err) {
-//     console.error(err.message);
-//   }
-// });
 passport.use(
   new JwtStrategy(
     {
@@ -68,97 +44,108 @@ passport.use(
     }
   )
 );
-app.get("/", (req, res) => {
-  res.send("This is a blank home page");
-});
-app.get("/users", async (req, res) => {
-  try {
-    const users = await User.find();
-    res.send(users);
-  } catch (e) {
-    console.error(e);
-  }
-  //   res.send("This is a blank home page");
-});
 
 //NOT USING PASSPORT
 app.post("/signup", async (req, res) => {
-  const user = {
-    userName: req.body.userName,
-    email: req.body.email,
-    password: req.body.password,
-  };
+  console.log("In signup route backend");
+  console.log(req.body);
+  try {
+    
+    const { error } = validateRegistration(req.body);
+    console.log(error);
+    if (error) {
+      console.log({ error });
+      return res.status(400).json({ message: error.message });
+    }
+    const user = await User.findOne({ email: req.body.email });
 
-  const { error } = validateRegistration(user);
-  if (error) {
-    console.log({ error });
-    // return res.status(400).json({ message: error.message });
+    if (user) {
+      return res.status(400).json({message: "User already exists"});
+    }
+
+    const newUser = new User({
+      userName: req.body.userName,
+      email: req.body.email,
+      password: req.body.password,
+    });
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(newUser.password, salt);
+    newUser.password = hash;
+
+    const savedUser = await newUser.save();
+
+    const payload = {
+      id: savedUser._id,
+      userName: savedUser.userName,
+      email: savedUser.email,
+    };
+
+    jwt.sign(payload, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
+      res.json({
+        success: true,
+        token: "Bearer " + token,
+      });
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "An error occurred" });
   }
+});
 
-  User.findOne({ email: req.body.email }).then(async (isEmail) => {
-    if (isEmail) {
+app.post("/login", async (req, res) => {
+  console.log("In login route backend");
+  console.log(req.body);
+  try {
+    const { isValid } = validateLogin(req.body);
+    console.log({isValid});
+    if (!isValid) {
       return res.status(400).json({
-        message:
-          "Email is already associated with an account. Please try to log in.",
+        message: "Failed to login, please check your email/password",
       });
     }
 
-    const newUser = await User.create(user);
+    const email = req.body.email;
+    const user = await User.findOne({ email });
 
-    bcrypt.genSalt(10, (err, salt) => {
-      bcrypt.hash(newUser.password, salt, async (err, hash) => {
-        if (err) throw err;
-        newUser.password = hash;
-
-        await newUser.save();
-        console.log("newUser created successfully", newUser);
-        // res.send("User created");
-      });
-    });
-  });
-});
-app.post("/login", (req, res) => {
-  const { error } = validateLogin(req.body);
-  if (error) {
-    // return res.status(400).json({
-    //     message: ""
-    // })
-    console.log({ error });
-  }
-  User.findOne({ email: req.body.email }).then((user) => {
     if (!user) {
       console.log({ error });
       return res.status(400).json({
-        message: "Account doesn't exist, plz register",
+        message: "Account doesn't exist, please register",
       });
     }
-    bcrypt.compare(req.body.password, user.password).then((isMatch) => {
-      //create token
-      if (isMatch) {
-        const payload = {
-          id: user._id,
-          userName: user.userName,
-          email: user.email,
-          password: user.password,
-        };
 
-        const token = jwt.sign(payload, keys.secretOrKey, {
-          expiresIn: 3600,
-        });
-        res.json({
-          success: true,
-          token: "Bearer " + token,
-        });
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
 
-        console.log({ token });
-      } else {
-        return res.status(400).json({
-          message: "Fail to login user, plz check your emai/password",
-        });
-      }
-    });
-  });
+    if (isMatch) {
+      const payload = {
+        id: user._id,
+        userName: user.userName,
+        email: user.email,
+        password: user.password,
+      };
+
+      const token = jwt.sign(payload, keys.secretOrKey, {
+        expiresIn: 3600,
+      });
+
+      res.json({
+        success: true,
+        token: "Bearer " + token,
+      });
+
+      console.log({ token });
+    } else {
+      return res.status(400).json({
+        message: "Failed to login user, please check your email/password",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
+// });
 app.get("/profile", async (req, res) => {
   const result = await jwt.verify();
   res.send("This is profile page");
@@ -167,7 +154,7 @@ app.get("/profile", async (req, res) => {
 app.get("/wrongToken", (req, res) => {
   res.send("Wrong token");
 });
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5002;
 
 mongoose
   .connect(MONGO_URL)

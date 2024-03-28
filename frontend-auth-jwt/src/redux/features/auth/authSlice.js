@@ -11,7 +11,7 @@ export const signup = createAsyncThunk(
   async (userData, { isRejectedWithValue }) => {
     console.log({ isRejectedWithValue });
     try {
-      const response = await fetch("http://localhost:3000/signup", {
+      const response = await fetch("http://localhost:5001/signup", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -33,7 +33,7 @@ export const signup = createAsyncThunk(
 
 export const login = createAsyncThunk("auth/login", async (userData) => {
   try {
-    const response = fetch("http://localhost:3000/login", {
+    const response = fetch("http://localhost:5001/login", {
       method: "POST",
       headers: {
         "Content-type": "application/json",

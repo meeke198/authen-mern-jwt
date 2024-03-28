@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import {useDispatch, useSelector} from "react-redux";
 import { signup } from "../redux/features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 const SignupForm = () => {
   const dispatch = useDispatch();
   const error = useSelector(store => store.auth.error)
@@ -8,17 +9,20 @@ const SignupForm = () => {
   const [password, setPassword] = useState("");
   const [userName, setUserName] = useState("");
 
-  const handleSubmit = (e) => {
+const navigate = useNavigate();
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newUser ={
       email, 
       password, 
       userName
     }
-    dispatch(signup(newUser));
+    const data = await dispatch(signup(newUser));
      setEmail("");
      setPassword("");
      setUserName("");
+     console.log(data);
+    navigate("/login");
   };
 const isFormValid = email.trim() !== "" && password.trim() !== "";
   return (
