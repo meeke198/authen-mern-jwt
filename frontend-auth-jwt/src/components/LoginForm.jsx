@@ -39,7 +39,6 @@ const LoginForm = (props) => {
             name="password"
             placeholder="············"
           />
-          <ion-icon className="show-hide" name="eye-outline" />
         </div>
       </div>
 

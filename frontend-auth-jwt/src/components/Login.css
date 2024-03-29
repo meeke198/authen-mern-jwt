@@ -50,43 +50,16 @@ border: none;
 outline: none;
 }
 
-
-/* .screen-1 .email input {
-  outline: none;
-  border: none;
-} */
-
-.screen-1 .email input::placeholder {
-  color: hsl(0deg 0% 0%);
-  font-size: 0.9em;
-}
-
 .screen-1 .email ion-icon {
   color: hsl(0deg 0% 30%);
   margin-bottom: -0.2em;
 }
 
-/* .screen-1 .password input {
-  outline: none;
-  border: none;
-} */
-
-.screen-1 .password input::placeholder {
-  color: hsl(0deg 0% 0%);
+.screen-1 input::placeholder {
+  color: hsl(0, 2%, 33%);
   font-size: 0.9em;
 }
 
-.screen-1 .password ion-icon {
-  color: hsl(0deg 0% 30%);
-  margin-bottom: -0.2em;
-}
-
-.screen-1 .password .show-hide {
-  margin-right: -5em;
-}
-/* .screen-1 input {
-    margin-bottom: 1rem;
-} */
 .screen-1 .login, .screen-1 .signup{
   padding: 1em;
   background: var(--s);

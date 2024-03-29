@@ -37,7 +37,7 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
       <div className="username">
         {/* <label htmlFor="email">Email Address</label> */}
         <div className="sec-2">
-          <ion-icon name="lock-closed-outline" />
+          <ion-icon name="mail-outline" />
           <input
             type="text"
             name="userName"
@@ -57,11 +57,7 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
         {/* <label htmlFor="password">Password</label> */}
         <div className="sec-2">
           <ion-icon name="lock-closed-outline" />
-          <input
-            type="password"
-            name="password"
-            placeholder="············"
-          />
+          <input type="password" name="password" placeholder="············" />
           <ion-icon className="show-hide" name="eye-outline" />
         </div>
       </div>
