@@ -28,7 +28,7 @@ const navigate = useNavigate();
   };
 const isFormValid = email.trim() !== "" && password.trim() !== "";
   return (
-    <form className="screen-1">
+    <form className="screen-1" onSubmit={handleSubmit}>
       <h3 style={{ padding: "0" }}>Welcome to</h3>
       <img
         src={logo}

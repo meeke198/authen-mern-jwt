@@ -1,21 +1,33 @@
-import React, { useState } from "react";
-import {useDispatch} from 'react-redux';
-import "./Login.css"
+import React, { useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../redux/features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo-banh.png";
+import "./Login.css";
 const LoginForm = (props) => {
   const dispatch = useDispatch();
+  const error = useSelector((store) => store.auth.error);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  console.log({ email });
-  console.log({ password });
+  const [userName, setUserName] = useState("");
   const handleToggle = props.toggle;
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Perform login logic here
-    // console.log("Logging in with:", email, password);
+    const user = {
+      email,
+      password,
+    };
+    const data = await dispatch(login(user));
+    console.log({data});
+    setEmail("");
+    setPassword("");
+    console.log();
+    navigate("/home");
   };
+  const isFormValid = email.trim() !== "" && password.trim() !== "";
   return (
-    <div className="screen-1">
+    <div className="screen-1" onSubmit={handleSubmit}>
       <h3 style={{ padding: "0" }}>Welcome back to</h3>
       <img
         src={logo}
@@ -42,7 +54,9 @@ const LoginForm = (props) => {
         </div>
       </div>
 
-      <button className="login">Login</button>
+      <button className="login" type="submit" disable={!isFormValid}>
+        Login
+      </button>
 
       <div className="footer">
         <span onClick={handleToggle}>Sign up</span>
