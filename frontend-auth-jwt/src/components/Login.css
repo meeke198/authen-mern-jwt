@@ -45,6 +45,9 @@ body {
 }
 .screen-1 input {
 border: none;
+width: 100%;
+background-color: none;
+text-decoration: none;
 }
 .screen-1 input:focus {
 outline: none;

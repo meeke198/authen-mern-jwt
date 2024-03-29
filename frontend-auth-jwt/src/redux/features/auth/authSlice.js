@@ -22,8 +22,12 @@ export const signup = createAsyncThunk(
       if (!response.ok) {
         throw new Error("Signup failed");
       }
-      console.log(response.token);
+       
       const data = await response.json();
+      const token = data.token;
+      localStorage.setItem("token", token.slice(7));
+      console.log({ data });
+      console.log(data.token);
       return data;
     } catch (error) {
       return isRejectedWithValue(error.message);
@@ -62,15 +66,19 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(signup.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
       .addCase(signup.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
       })
       .addCase(signup.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

@@ -26,7 +26,7 @@ const LoginForm = (props) => {
   };
   const isFormValid = email.trim() !== "" && password.trim() !== "";
   return (
-    <div className="screen-1" onSubmit={handleSubmit}>
+    <form className="screen-1" onSubmit={handleSubmit}>
       <h3 style={{ padding: "0" }}>Welcome back to</h3>
       <img
         src={logo}
@@ -59,15 +59,15 @@ const LoginForm = (props) => {
         </div>
       </div>
 
-      <button className="login" type="submit" disable={!isFormValid}>
+      <button className="login" type="submit" disabled={!isFormValid}>
         Login
       </button>
 
       <div className="footer">
+        <span>Doesn't have an account?</span>
         <span onClick={handleToggle}>Sign up</span>
-        <span>Forgot Password?</span>
       </div>
-    </div>
+    </form>
   );
 };
 export default LoginForm;

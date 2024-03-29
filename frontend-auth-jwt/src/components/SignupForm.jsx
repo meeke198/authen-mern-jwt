@@ -24,7 +24,10 @@ const navigate = useNavigate();
      setPassword("");
      setUserName("");
      console.log();
-    navigate("/login");
+     if(data){
+      navigate("/login");
+     }
+    
   };
 const isFormValid = email.trim() !== "" && password.trim() !== "";
   return (
@@ -40,7 +43,7 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
           <ion-icon name="mail-outline" />
           <input
             value={userName}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setUserName(e.target.value)}
             type="text"
             name="userName"
             placeholder="Enter your username"
@@ -56,7 +59,7 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
             name="email"
             placeholder="Enter your email"
             value={email}
-            onChange={(e) => setUserName(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
       </div>
@@ -76,7 +79,7 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
         </div>
       </div>
 
-      <button className="signup" type="submit" disable={!isFormValid}>
+      <button className="signup" type="submit" disabled={!isFormValid}>
         Sign up
       </button>
       <div className="footer">

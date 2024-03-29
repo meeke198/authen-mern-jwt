@@ -16,7 +16,7 @@ function App() {
       <Router>
         {/* <div className="App"> */}
         <Routes>
-          <Route path="/session" element={<SessionForm />} />
+          <Route path="/" element={<SessionForm />} />
           <Route path="/signup" element={<SignupForm />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/home" element={<Home />} />
