@@ -21,7 +21,7 @@ const navigate = useNavigate();
      setEmail("");
      setPassword("");
      setUserName("");
-     console.log(data);
+     console.log();
     navigate("/login");
   };
 const isFormValid = email.trim() !== "" && password.trim() !== "";
