@@ -39,6 +39,8 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
         <div className="sec-2">
           <ion-icon name="mail-outline" />
           <input
+            value={userName}
+            onChange={(e) => setEmail(e.target.value)}
             type="text"
             name="userName"
             placeholder="Enter your username"
@@ -49,7 +51,13 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
         {/* <label htmlFor="email">Email Address</label> */}
         <div className="sec-2">
           <ion-icon name="mail-outline" />
-          <input type="email" name="email" placeholder="Enter your email" />
+          <input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setUserName(e.target.value)}
+          />
         </div>
       </div>
 
@@ -57,7 +65,13 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
         {/* <label htmlFor="password">Password</label> */}
         <div className="sec-2">
           <ion-icon name="lock-closed-outline" />
-          <input type="password" name="password" placeholder="············" />
+          <input
+            type="password"
+            name="password"
+            placeholder="············"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
           <ion-icon className="show-hide" name="eye-outline" />
         </div>
       </div>

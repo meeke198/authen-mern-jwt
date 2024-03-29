@@ -9,7 +9,6 @@ const LoginForm = (props) => {
   const error = useSelector((store) => store.auth.error);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userName, setUserName] = useState("");
   const handleToggle = props.toggle;
   const navigate = useNavigate();
   const handleSubmit = async (e) => {
@@ -34,18 +33,24 @@ const LoginForm = (props) => {
         style={{ height: "auto", width: "120px", marginTop: "-2rem" }}
       />
       <div className="email">
-        {/* <label htmlFor="email">Email Address</label> */}
         <div className="sec-2">
           <ion-icon name="mail-outline" />
-          <input type="email" name="email" placeholder="Enter your email" />
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+          />
         </div>
       </div>
 
       <div className="password">
-        {/* <label htmlFor="password">Password</label> */}
         <div className="sec-2">
           <ion-icon name="lock-closed-outline" />
           <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="pas"
             type="password"
             name="password"
