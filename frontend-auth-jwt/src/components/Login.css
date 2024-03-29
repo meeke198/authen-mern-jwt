@@ -9,7 +9,6 @@
 
 body {
   user-select: none;
-  /* overflow-y: hidden; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -32,22 +31,30 @@ body {
  
 }
 
-.screen-1 .email {
+.screen-1 .email, .screen-1 .username, .screen-1 .password
+ {
   background: hsl(0deg 0% 100%);
   box-shadow: 0 0 2em hsl(231deg 62% 94%);
-  padding: 1em;
+  padding: 0.7em;
   display: flex;
   flex-direction: column;
   gap: 0.5em;
   border-radius: 20px;
   color: hsl(0deg 0% 30%);
-  margin-top: 1rem;
+  margin-top: -0.5rem;
+}
+.screen-1 input {
+border: none;
+}
+.screen-1 input:focus {
+outline: none;
 }
 
-.screen-1 .email input {
+
+/* .screen-1 .email input {
   outline: none;
   border: none;
-}
+} */
 
 .screen-1 .email input::placeholder {
   color: hsl(0deg 0% 0%);
@@ -59,21 +66,10 @@ body {
   margin-bottom: -0.2em;
 }
 
-.screen-1 .password {
-  background: hsl(0deg 0% 100%);
-  box-shadow: 0 0 2em hsl(231deg 62% 94%);
-  padding: 1em;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5em;
-  border-radius: 20px;
-  color: hsl(0deg 0% 30%);
-}
-
-.screen-1 .password input {
+/* .screen-1 .password input {
   outline: none;
   border: none;
-}
+} */
 
 .screen-1 .password input::placeholder {
   color: hsl(0deg 0% 0%);
@@ -88,8 +84,10 @@ body {
 .screen-1 .password .show-hide {
   margin-right: -5em;
 }
-
-.screen-1 .login {
+/* .screen-1 input {
+    margin-bottom: 1rem;
+} */
+.screen-1 .login, .screen-1 .signup{
   padding: 1em;
   background: var(--s);
   color: hsl(0 0 100);
