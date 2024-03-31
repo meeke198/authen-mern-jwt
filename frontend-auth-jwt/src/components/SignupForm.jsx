@@ -6,11 +6,13 @@ import logo from "../assets/images/logo-banh.png";
 import "./Login.css"
 const SignupForm = (props) => {
   const dispatch = useDispatch();
-  const error = useSelector(store => store.auth.error)
+const initalMessage = useSelector((store) => store.auth.error);
+const [message, setMessage] = useState(initalMessage);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userName, setUserName] = useState("");
 const handleToggle = props.toggle;
+console.log(message)
 const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,21 +26,29 @@ const navigate = useNavigate();
      setPassword("");
      setUserName("");
      console.log();
-     if(data){
-      navigate("/login");
+     if (data.error) {
+       // Login failed, handle the error
+       // You can display an error message to the user or perform any other necessary actions
+      //  setMessage(data.error);
+      console.log(data)
+     } else {
+      setMessage("Account created successfully");
+       // Login successful, navigate to "/home"
+      //  navigate("/home");
+      console.log(data.payload.success);
      }
     
   };
 const isFormValid = email.trim() !== "" && password.trim() !== "";
   return (
     <form className="screen-1" onSubmit={handleSubmit}>
-      <h3 style={{ padding: "0" }}>Welcome to</h3>
+      <h3 style={{ padding: "0", marginTop: "0.5rem" }}>Welcome to</h3>
       <img
         src={logo}
-        style={{ height: "auto", width: "120px", marginTop: "-2rem" }}
+        style={{ height: "auto", width: "100px", marginTop: "-2rem" }}
       />
+      {message && <h6 style={{ color: "pink", marginTop: "-1.5rem", marginBottom: 0 }}>{message}</h6>}
       <div className="username">
-        {/* <label htmlFor="email">Email Address</label> */}
         <div className="sec-2">
           <ion-icon name="mail-outline" />
           <input
@@ -51,7 +61,6 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
         </div>
       </div>
       <div className="email">
-        {/* <label htmlFor="email">Email Address</label> */}
         <div className="sec-2">
           <ion-icon name="mail-outline" />
           <input

@@ -6,7 +6,9 @@ import logo from "../assets/images/logo-banh.png";
 import "./Login.css";
 const LoginForm = (props) => {
   const dispatch = useDispatch();
-  const error = useSelector((store) => store.auth.error);
+    const [message, setMessage] = useState(
+      useSelector((store) => store.auth.error)
+    );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handleToggle = props.toggle;
@@ -19,6 +21,7 @@ const LoginForm = (props) => {
     };
     const data = await dispatch(login(user));
     console.log({data});
+    // setMessage(data.message)
     setEmail("");
     setPassword("");
     console.log();
@@ -58,7 +61,7 @@ const LoginForm = (props) => {
           />
         </div>
       </div>
-
+      {message && <h4 style={{color: "pink"}}>{message}</h4>}
       <button className="login" type="submit" disabled={!isFormValid}>
         Login
       </button>

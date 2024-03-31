@@ -1,15 +1,15 @@
-import { createSlice, createAsyncThunk, isRejectedWithValue } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null,
   token: null,
   loading: false,
-  error: null
+  error: null,
 };
+
 export const signup = createAsyncThunk(
   "auth/signup",
-  async (userData, { isRejectedWithValue }) => {
-    console.log({ isRejectedWithValue });
+  async (userData, { rejectWithValue }) => {
     try {
       const response = await fetch("http://localhost:5001/signup", {
         method: "POST",
@@ -18,26 +18,25 @@ export const signup = createAsyncThunk(
         },
         body: JSON.stringify(userData),
       });
-      
+
       if (!response.ok) {
         throw new Error("Signup failed");
       }
-       
       const data = await response.json();
       const token = data.token;
+      console.log({data});
+      console.log({token});
       localStorage.setItem("token", token.slice(7));
-      console.log({ data });
-      console.log(data.token);
       return data;
     } catch (error) {
-      return isRejectedWithValue(error.message);
+      return rejectWithValue(error.message);
     }
   }
 );
 
 export const login = createAsyncThunk("auth/login", async (userData) => {
   try {
-    const response = fetch("http://localhost:5001/login", {
+    const response = await fetch("http://localhost:5001/login", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -46,17 +45,18 @@ export const login = createAsyncThunk("auth/login", async (userData) => {
       body: JSON.stringify(userData),
     });
 
-    if(!response.ok){
-      throw Error("User not found")
+    if (!response.ok) {
+      throw new Error("Log in failed");
     }
-  const data = await response.json();
-  const token = data.token;
-  localStorage.setItem("token", token.slice(7));
-  console.log({ data });
-  //decoded and login user
-  return data;
+
+    const data = await response.json();
+    const token = data.token;
+    localStorage.setItem("token", token.slice(7));
+
+    return data;
   } catch (error) {
-    console.error(error)
+    console.error(error);
+    throw error;
   }
 });
 
@@ -66,6 +66,10 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(signup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(signup.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
@@ -73,6 +77,10 @@ export const authSlice = createSlice({
       .addCase(signup.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
@@ -84,7 +92,5 @@ export const authSlice = createSlice({
       });
   },
 });
-
-// Action creators are generated for each case reducer function
 
 export default authSlice.reducer;
