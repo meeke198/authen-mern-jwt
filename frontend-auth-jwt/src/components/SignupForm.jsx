@@ -1,45 +1,43 @@
-import React, { useState, useRef } from "react";
-import {useDispatch, useSelector} from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { signup } from "../redux/features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/images/logo-banh.png";
-import "./Login.css"
+import "./Login.css";
+
 const SignupForm = (props) => {
   const dispatch = useDispatch();
-const initalMessage = useSelector((store) => store.auth.error);
-const [message, setMessage] = useState(initalMessage);
+  const { error } = useSelector((store) => store.auth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userName, setUserName] = useState("");
-const handleToggle = props.toggle;
-console.log(message)
-const navigate = useNavigate();
+  const handleToggle = props.toggle;
+  const navigate = useNavigate();
+// console.log(error);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newUser ={
-      email, 
-      password, 
-      userName
-    }
+    const newUser = { email, password, userName };
     const data = await dispatch(signup(newUser));
-     setEmail("");
-     setPassword("");
-     setUserName("");
-     console.log();
-     if (data.error) {
-       // Login failed, handle the error
-       // You can display an error message to the user or perform any other necessary actions
-      //  setMessage(data.error);
-      console.log(data)
-     } else {
-      setMessage("Account created successfully");
-       // Login successful, navigate to "/home"
-      //  navigate("/home");
-      console.log(data.payload.success);
-     }
-    
+    setEmail("");
+    setPassword("");
+    setUserName("");
+    console.log({ data });
+    if (data.error) {
+      console.log(data.error);
+    } else {
+      navigate("/login");
+      throw alert("Signup successfully")
+    }
   };
-const isFormValid = email.trim() !== "" && password.trim() !== "";
+const errorStyle = {
+  color: "red",
+  fontWeight: "bold",
+  fontSize: "0.55rem",
+  margin: "-1rem 1rem",
+  padding: 0,
+};
+  const isFormValid = email.trim() !== "" && password.trim() !== "";
+
   return (
     <form className="screen-1" onSubmit={handleSubmit}>
       <h3 style={{ padding: "0", marginTop: "0.5rem" }}>Welcome to</h3>
@@ -47,7 +45,9 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
         src={logo}
         style={{ height: "auto", width: "100px", marginTop: "-2rem" }}
       />
-      {message && <h6 style={{ color: "pink", marginTop: "-1.5rem", marginBottom: 0 }}>{message}</h6>}
+      {error?.error.message && (
+        <p style={{ ...errorStyle }}>{error?.error.message}</p  >
+      )}
       <div className="username">
         <div className="sec-2">
           <ion-icon name="mail-outline" />
@@ -60,6 +60,9 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
           />
         </div>
       </div>
+      {error?.error.userName && (
+        <p style={{ ...errorStyle }}>{error?.error.userName}</p>
+      )}
       <div className="email">
         <div className="sec-2">
           <ion-icon name="mail-outline" />
@@ -72,9 +75,10 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
           />
         </div>
       </div>
-
+      {error?.error.email && (
+        <p style={{ ...errorStyle }}>{error?.error.email}</p>
+      )}
       <div className="password">
-        {/* <label htmlFor="password">Password</label> */}
         <div className="sec-2">
           <ion-icon name="lock-closed-outline" />
           <input
@@ -87,7 +91,9 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
           <ion-icon className="show-hide" name="eye-outline" />
         </div>
       </div>
-
+      {error?.error.password && (
+        <p style={{ ...errorStyle }}>{error?.error.password}</p>
+      )}
       <button className="signup" type="submit" disabled={!isFormValid}>
         Sign up
       </button>
@@ -98,4 +104,5 @@ const isFormValid = email.trim() !== "" && password.trim() !== "";
     </form>
   );
 };
+
 export default SignupForm;

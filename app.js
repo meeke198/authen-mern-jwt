@@ -47,20 +47,15 @@ passport.use(
 
 //NOT USING PASSPORT
 app.post("/signup", async (req, res) => {
-  console.log("In signup route backend");
-  console.log(req.body);
   try {
-    
-    const { error } = validateRegistration(req.body);
-    console.log(error);
+    const error = validateRegistration(req.body);
     if (error) {
-      console.log({ error });
-      return res.status(400).json({ message: error.message });
+      return res.status(400).json({ error });
     }
     const user = await User.findOne({ email: req.body.email });
-
     if (user) {
-      return res.status(400).json({message: "User already exists"});
+      // const error = new Error()
+      return res.status(400).json({error: {message: "User already exists"}});
     }
 
     const newUser = new User({
@@ -86,10 +81,13 @@ app.post("/signup", async (req, res) => {
         success: true,
         token: "Bearer " + token,
       });
+      console.log("User create successfully");
     });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: "An error occurred" });
+    console.log({err});
+    const error = new Error();
+    error.message = err.message;
+    res.status(500).json({ error });
   }
 });
 

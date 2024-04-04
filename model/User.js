@@ -1,33 +1,50 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 const Joi = require("joi");
 
-const UserSchema = new Schema({
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
   userName: { type: String, required: true },
   email: { type: String, required: true },
-  password: { type: String, required: true },
+  password: { type: String, required: true, minlength: 8 },
 });
 
-const User = mongoose.model("User", UserSchema, "User");
+const User = mongoose.model("User", userSchema, "User");
 
-// Validation
 function validateRegistration(user) {
-  console.log("in validateRegistration");
-  console.log(user);
-  const schema = Joi.object({
-    userName: Joi.string().min(3).max(30).required(),
+  const signUpSchema = Joi.object({
+    userName: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
   });
-  return schema.validate(user);
+
+  const { error } = signUpSchema.validate(user, { abortEarly: false });
+  if (error) {
+    const formattedError = handleError(error);
+    return formattedError;
+  }
+  return null;
 }
 
 function validateLogin(user) {
   const schema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required(),
+    password: Joi.string().min(8).required(),
   });
-  return schema.validate(user);
+
+  const { error } = schema.validate(user, { abortEarly: false });
+  if (error) {
+    return handleError(error);
+  }
+  return null;
+}
+
+function handleError(error) {
+  const formattedError = error.details.reduce((acc, validationError) => {
+    acc[validationError.context.key] = validationError.message;
+    return acc;
+  }, {});
+  return formattedError;
 }
 
 module.exports = {

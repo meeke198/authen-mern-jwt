@@ -20,11 +20,6 @@ const SessionForm = () => {
       ) : (
         <SignupForm toggle={handleFormToggle} />
       )}
-      <div className="switch-link">
-        {/* <a href="#" onClick={handleFormToggle}>
-          {isLoginFormActive ? "Switch to Signup" : "Switch to Login"}
-        </a> */}
-      </div>
     </div>
   );
 };

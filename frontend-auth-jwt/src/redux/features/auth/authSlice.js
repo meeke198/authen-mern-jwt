@@ -1,12 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
 const initialState = {
   user: null,
   token: null,
   loading: false,
   error: null,
 };
-
 export const signup = createAsyncThunk(
   "auth/signup",
   async (userData, { rejectWithValue }) => {
@@ -20,12 +18,12 @@ export const signup = createAsyncThunk(
       });
 
       if (!response.ok) {
-        throw new Error("Signup failed");
+        const errorData = await response.json();
+        throw new Error(JSON.stringify(errorData));
       }
+
       const data = await response.json();
       const token = data.token;
-      console.log({data});
-      console.log({token});
       localStorage.setItem("token", token.slice(7));
       return data;
     } catch (error) {
@@ -52,7 +50,6 @@ export const login = createAsyncThunk("auth/login", async (userData) => {
     const data = await response.json();
     const token = data.token;
     localStorage.setItem("token", token.slice(7));
-
     return data;
   } catch (error) {
     console.error(error);
@@ -76,7 +73,7 @@ export const authSlice = createSlice({
       })
       .addCase(signup.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = JSON.parse(action.payload);
       })
       .addCase(login.pending, (state) => {
         state.loading = true;
@@ -88,7 +85,7 @@ export const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = JSON.parse(action.payload);
       });
   },
 });
